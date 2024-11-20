@@ -2,35 +2,33 @@ package soot.jimple.infoflow.solver;
 
 import java.util.Objects;
 
-import soot.jimple.infoflow.solver.fastSolver.FastSolverLinkedNode;
+import soot.Unit;
+import soot.jimple.infoflow.data.Abstraction;
 
 /**
  * A data class for end summaries that are computed once a method has been
  * processed so that the data flows through that method can be re-used
  * 
  * @author Steven Arzt
- *
- * @param <N> The type for statements in the CFG
- * @param <D> The type of the data flow abstraction
  */
-public class EndSummary<N, D extends FastSolverLinkedNode<D, N>> {
+public class EndSummary {
 
 	/**
 	 * The exit point of the callee to which the summary applies
 	 */
-	public N eP;
+	public Unit eP;
 
 	/**
 	 * The taint abstraction at eP
 	 */
-	public D d4;
+	public Abstraction d4;
 
 	/**
 	 * The abstraction at the beginning of the callee
 	 */
-	public D calleeD1;
+	public Abstraction calleeD1;
 
-	public EndSummary(N eP, D d4, D calleeD1) {
+	public EndSummary(Unit eP, Abstraction d4, Abstraction calleeD1) {
 		this.eP = eP;
 		this.d4 = d4;
 		this.calleeD1 = calleeD1;

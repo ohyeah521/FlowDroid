@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import heros.solver.PathEdge;
 import soot.SootMethod;
+import soot.Unit;
+import soot.jimple.infoflow.data.Abstraction;
 import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
 import soot.util.ConcurrentHashMultiMap;
 
@@ -12,11 +14,8 @@ import soot.util.ConcurrentHashMultiMap;
  * Garbage collector that performs its tasks in a separate thread
  * 
  * @author Steven Arzt
- *
- * @param <N>
- * @param <D>
  */
-public class ThreadedGarbageCollector<N, D> extends MethodLevelReferenceCountingGarbageCollector<N, D> {
+public class ThreadedGarbageCollector extends MethodLevelReferenceCountingGarbageCollector {
 
 	protected static final Logger logger = LoggerFactory.getLogger(ThreadedGarbageCollector.class);
 
@@ -60,14 +59,14 @@ public class ThreadedGarbageCollector<N, D> extends MethodLevelReferenceCounting
 
 	private GCThread gcThread;
 
-	public ThreadedGarbageCollector(BiDiInterproceduralCFG<N, SootMethod> icfg,
-			ConcurrentHashMultiMap<SootMethod, PathEdge<N, D>> jumpFunctions,
+	public ThreadedGarbageCollector(BiDiInterproceduralCFG<Unit, SootMethod> icfg,
+			ConcurrentHashMultiMap<SootMethod, PathEdge<Unit, Abstraction>> jumpFunctions,
 			IGCReferenceProvider<SootMethod> referenceProvider) {
 		super(icfg, jumpFunctions, referenceProvider);
 	}
 
-	public ThreadedGarbageCollector(BiDiInterproceduralCFG<N, SootMethod> icfg,
-			ConcurrentHashMultiMap<SootMethod, PathEdge<N, D>> jumpFunctions) {
+	public ThreadedGarbageCollector(BiDiInterproceduralCFG<Unit, SootMethod> icfg,
+			ConcurrentHashMultiMap<SootMethod, PathEdge<Unit, Abstraction>> jumpFunctions) {
 		super(icfg, jumpFunctions);
 	}
 
@@ -122,7 +121,7 @@ public class ThreadedGarbageCollector<N, D> extends MethodLevelReferenceCounting
 	@Override
 	protected void onAfterRemoveEdges() {
 		int pec = 0;
-		for(Integer i : jumpFnCounter.values()) {
+		for (Integer i : jumpFnCounter.values()) {
 			pec += i;
 		}
 		this.maxPathEdgeCount = Math.max(this.maxPathEdgeCount, pec);

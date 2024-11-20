@@ -37,7 +37,6 @@ import soot.Scene;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
-import soot.Unit;
 import soot.jimple.Stmt;
 import soot.jimple.infoflow.AbstractInfoflow;
 import soot.jimple.infoflow.BackwardsInfoflow;
@@ -85,7 +84,6 @@ import soot.jimple.infoflow.cfg.LibraryClassPatcher;
 import soot.jimple.infoflow.collections.codeOptimization.ConstantTagFolding;
 import soot.jimple.infoflow.collections.codeOptimization.StringResourcesResolver;
 import soot.jimple.infoflow.config.IInfoflowConfig;
-import soot.jimple.infoflow.data.Abstraction;
 import soot.jimple.infoflow.data.FlowDroidMemoryManager.PathDataErasureMode;
 import soot.jimple.infoflow.entryPointCreators.SimulatedCodeElementTag;
 import soot.jimple.infoflow.handlers.PostAnalysisHandler;
@@ -1798,8 +1796,7 @@ public class SetupApplication implements ITaintWrapperDataFlowAnalysis {
 		info.setMemoryManagerFactory(new IMemoryManagerFactory() {
 
 			@Override
-			public IMemoryManager<Abstraction, Unit> getMemoryManager(boolean tracingEnabled,
-					PathDataErasureMode erasePathData) {
+			public IMemoryManager getMemoryManager(boolean tracingEnabled, PathDataErasureMode erasePathData) {
 				return new AndroidMemoryManager(tracingEnabled, erasePathData, entrypoints);
 			}
 

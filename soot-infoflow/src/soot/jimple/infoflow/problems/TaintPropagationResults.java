@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import soot.SootMethod;
-import soot.Unit;
 import soot.jimple.infoflow.InfoflowManager;
 import soot.jimple.infoflow.cfg.FlowDroidEssentialMethodTag;
 import soot.jimple.infoflow.collect.MyConcurrentHashMap;
@@ -72,7 +71,7 @@ public class TaintPropagationResults {
 		abs.setCorrespondingCallSite(resultAbs.getSinkStmt());
 
 		// Reduce the incoming abstraction
-		IMemoryManager<Abstraction, Unit> memoryManager = manager.getMainSolver().getMemoryManager();
+		IMemoryManager memoryManager = manager.getMainSolver().getMemoryManager();
 		if (memoryManager != null) {
 			abs = memoryManager.handleMemoryObject(abs);
 			if (abs == null)

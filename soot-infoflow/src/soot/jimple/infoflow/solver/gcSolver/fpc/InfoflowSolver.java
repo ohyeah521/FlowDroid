@@ -23,7 +23,6 @@ import soot.jimple.infoflow.solver.EndSummary;
 import soot.jimple.infoflow.solver.IFollowReturnsPastSeedsHandler;
 import soot.jimple.infoflow.solver.IInfoflowSolver;
 import soot.jimple.infoflow.solver.IncomingRecord;
-import soot.jimple.infoflow.solver.cfg.IInfoflowCFG;
 import soot.jimple.infoflow.solver.executors.InterruptableExecutor;
 import soot.jimple.infoflow.solver.functions.SolverCallFlowFunction;
 import soot.jimple.infoflow.solver.functions.SolverCallToReturnFlowFunction;
@@ -37,8 +36,7 @@ import soot.util.ConcurrentHashMultiMap;
  * edges containing new taint information
  * 
  */
-public class InfoflowSolver extends IFDSSolver<Unit, Abstraction, IInfoflowCFG>
-		implements IInfoflowSolver {
+public class InfoflowSolver extends IFDSSolver implements IInfoflowSolver {
 
 	private IFollowReturnsPastSeedsHandler followReturnsPastSeedsHandler = null;
 	private final AbstractInfoflowProblem problem;
@@ -71,7 +69,7 @@ public class InfoflowSolver extends IFDSSolver<Unit, Abstraction, IInfoflowCFG>
 
 	@Override
 	public void injectContext(IInfoflowSolver otherSolver, SootMethod callee, Abstraction d3, Unit callSite,
-							  Abstraction d2, Abstraction d1) {
+			Abstraction d2, Abstraction d1) {
 		// The incoming data structure is shared in the peer group. No need to inject.
 	}
 
@@ -87,13 +85,13 @@ public class InfoflowSolver extends IFDSSolver<Unit, Abstraction, IInfoflowCFG>
 		return solverPeerGroup.addIncoming(m, d3, n, d1, d2);
 	}
 
-    @Override
-    public void applySummary(SootMethod callee, Abstraction d3, Unit callSite, Abstraction d2, Abstraction d1) {
+	@Override
+	public void applySummary(SootMethod callee, Abstraction d3, Unit callSite, Abstraction d2, Abstraction d1) {
 		Collection<Unit> returnSiteNs = icfg.getReturnSitesOfCallAt(callSite);
 		applyEndSummaryOnCall(d1, callSite, d2, returnSiteNs, callee, d3);
-    }
+	}
 
-    @Override
+	@Override
 	protected Set<Abstraction> computeReturnFlowFunction(FlowFunction<Abstraction> retFunction, Abstraction d1,
 			Abstraction d2, Unit callSite, Collection<Abstraction> callerSideDs) {
 		if (retFunction instanceof SolverReturnFlowFunction) {
@@ -154,7 +152,7 @@ public class InfoflowSolver extends IFDSSolver<Unit, Abstraction, IInfoflowCFG>
 			final Abstraction d2 = edge.factAtTarget();
 
 			final SootMethod methodThatNeedsSummary = icfg.getMethodOf(u);
-			final Set<IncomingRecord<Unit, Abstraction>> inc = incoming(d1, methodThatNeedsSummary);
+			final Set<IncomingRecord> inc = incoming(d1, methodThatNeedsSummary);
 
 			if (inc == null || inc.isEmpty())
 				followReturnsPastSeedsHandler.handleFollowReturnsPastSeeds(d1, u, d2);
@@ -164,11 +162,6 @@ public class InfoflowSolver extends IFDSSolver<Unit, Abstraction, IInfoflowCFG>
 	@Override
 	public void setFollowReturnsPastSeedsHandler(IFollowReturnsPastSeedsHandler handler) {
 		this.followReturnsPastSeedsHandler = handler;
-	}
-
-	@Override
-	public long getPropagationCount() {
-		return propagationCount.sum();
 	}
 
 	@Override

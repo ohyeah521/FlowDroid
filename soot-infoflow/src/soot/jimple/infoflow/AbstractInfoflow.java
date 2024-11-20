@@ -705,7 +705,7 @@ public abstract class AbstractInfoflow implements IInfoflow {
 			});
 
 			// Initialize the memory manager
-			IMemoryManager<Abstraction, Unit> memoryManager = createMemoryManager();
+			IMemoryManager memoryManager = createMemoryManager();
 
 			// Initialize our infrastructure for global taints
 			final Set<IInfoflowSolver> solvers = new HashSet<>();
@@ -1640,7 +1640,7 @@ public abstract class AbstractInfoflow implements IInfoflow {
 	 *
 	 * @return The memory manager object
 	 */
-	protected IMemoryManager<Abstraction, Unit> createMemoryManager() {
+	protected IMemoryManager createMemoryManager() {
 		if (memoryManagerFactory == null)
 			return null;
 
@@ -1653,7 +1653,7 @@ public abstract class AbstractInfoflow implements IInfoflow {
 			erasureMode = FlowDroidMemoryManager.PathDataErasureMode.KeepOnlyContextData;
 		else
 			erasureMode = FlowDroidMemoryManager.PathDataErasureMode.EraseAll;
-		IMemoryManager<Abstraction, Unit> memoryManager = memoryManagerFactory.getMemoryManager(false, erasureMode);
+		IMemoryManager memoryManager = memoryManagerFactory.getMemoryManager(false, erasureMode);
 		return memoryManager;
 	}
 
@@ -1811,7 +1811,7 @@ public abstract class AbstractInfoflow implements IInfoflow {
 	 * @return The alias analysis implementation to use for the data flow analysis
 	 */
 	protected abstract IAliasingStrategy createAliasAnalysis(final ISourceSinkManager sourcesSinks, IInfoflowCFG iCfg,
-			InterruptableExecutor executor, IMemoryManager<Abstraction, Unit> memoryManager);
+			InterruptableExecutor executor, IMemoryManager memoryManager);
 
 	/**
 	 * Initializes the alias analysis for the backward direction
@@ -1826,7 +1826,7 @@ public abstract class AbstractInfoflow implements IInfoflow {
 	 */
 	protected IAliasingStrategy createBackwardAliasAnalysis(InfoflowManager manager,
 			final ISourceSinkManager sourcesSinks, IInfoflowCFG iCfg, InterruptableExecutor executor,
-			IMemoryManager<Abstraction, Unit> memoryManager) {
+			IMemoryManager memoryManager) {
 		IAliasingStrategy aliasingStrategy;
 		IInfoflowSolver aliasSolver = null;
 		BackwardsAliasProblem aliasProblem = null;

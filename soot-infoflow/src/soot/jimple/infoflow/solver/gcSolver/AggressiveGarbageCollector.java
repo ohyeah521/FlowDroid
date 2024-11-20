@@ -6,6 +6,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import heros.solver.Pair;
 import heros.solver.PathEdge;
 import soot.SootMethod;
+import soot.Unit;
+import soot.jimple.infoflow.data.Abstraction;
 import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
 import soot.util.ConcurrentHashMultiMap;
 
@@ -17,7 +19,7 @@ import soot.util.ConcurrentHashMultiMap;
  * @author Steven Arzt
  *
  */
-public class AggressiveGarbageCollector<N, D> extends AbstractGarbageCollector<N, D, SootMethod> {
+public class AggressiveGarbageCollector extends AbstractGarbageCollector<SootMethod> {
 
 	private final AtomicInteger gcedMethods = new AtomicInteger();
 
@@ -27,26 +29,26 @@ public class AggressiveGarbageCollector<N, D> extends AbstractGarbageCollector<N
 	 */
 	private int methodThreshold = 0;
 
-	public AggressiveGarbageCollector(BiDiInterproceduralCFG<N, SootMethod> icfg,
-			ConcurrentHashMultiMap<SootMethod, PathEdge<N, D>> jumpFunctions) {
+	public AggressiveGarbageCollector(BiDiInterproceduralCFG<Unit, SootMethod> icfg,
+			ConcurrentHashMultiMap<SootMethod, PathEdge<Unit, Abstraction>> jumpFunctions) {
 		super(icfg, jumpFunctions);
 	}
 
 	@Override
-	public void notifyEdgeSchedule(PathEdge<N, D> edge) {
+	public void notifyEdgeSchedule(PathEdge<Unit, Abstraction> edge) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void notifyTaskProcessed(PathEdge<N, D> edge) {
+	public void notifyTaskProcessed(PathEdge<Unit, Abstraction> edge) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void gc() {
-		Iterator<Pair<SootMethod, PathEdge<N, D>>> it = jumpFunctions.iterator();
+		Iterator<Pair<SootMethod, PathEdge<Unit, Abstraction>>> it = jumpFunctions.iterator();
 		while (jumpFunctions.size() > methodThreshold) {
 			it.next();
 			it.remove();

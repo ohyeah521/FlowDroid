@@ -1,7 +1,5 @@
 package soot.jimple.infoflow.solver.memory;
 
-import soot.Unit;
-import soot.jimple.infoflow.data.Abstraction;
 import soot.jimple.infoflow.data.FlowDroidMemoryManager;
 import soot.jimple.infoflow.data.FlowDroidMemoryManager.PathDataErasureMode;
 
@@ -21,8 +19,7 @@ public class DefaultMemoryManagerFactory implements IMemoryManagerFactory {
 	}
 
 	@Override
-	public IMemoryManager<Abstraction, Unit> getMemoryManager(boolean tracingEnabled,
-			PathDataErasureMode erasePathData) {
+	public IMemoryManager getMemoryManager(boolean tracingEnabled, PathDataErasureMode erasePathData) {
 		return new FlowDroidMemoryManager(tracingEnabled, erasePathData);
 	}
 

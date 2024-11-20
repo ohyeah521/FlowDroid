@@ -1,23 +1,26 @@
 package soot.jimple.infoflow.solver.gcSolver;
 
+import java.util.Set;
+
 import heros.solver.PathEdge;
 import soot.SootMethod;
+import soot.Unit;
 import soot.jimple.infoflow.collect.ConcurrentCountingMap;
+import soot.jimple.infoflow.data.Abstraction;
 import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
 import soot.util.ConcurrentHashMultiMap;
 
-import java.util.Set;
+public class MethodLevelReferenceCountingGarbageCollector
+		extends AbstractReferenceCountingGarbageCollector<SootMethod> {
 
-public class MethodLevelReferenceCountingGarbageCollector<N, D>
-		extends AbstractReferenceCountingGarbageCollector<N, D, SootMethod> {
-	public MethodLevelReferenceCountingGarbageCollector(BiDiInterproceduralCFG<N, SootMethod> icfg,
-			ConcurrentHashMultiMap<SootMethod, PathEdge<N, D>> jumpFunctions,
+	public MethodLevelReferenceCountingGarbageCollector(BiDiInterproceduralCFG<Unit, SootMethod> icfg,
+			ConcurrentHashMultiMap<SootMethod, PathEdge<Unit, Abstraction>> jumpFunctions,
 			IGCReferenceProvider<SootMethod> referenceProvider) {
 		super(icfg, jumpFunctions, referenceProvider);
 	}
 
-	public MethodLevelReferenceCountingGarbageCollector(BiDiInterproceduralCFG<N, SootMethod> icfg,
-			ConcurrentHashMultiMap<SootMethod, PathEdge<N, D>> jumpFunctions) {
+	public MethodLevelReferenceCountingGarbageCollector(BiDiInterproceduralCFG<Unit, SootMethod> icfg,
+			ConcurrentHashMultiMap<SootMethod, PathEdge<Unit, Abstraction>> jumpFunctions) {
 		super(icfg, jumpFunctions);
 	}
 
@@ -57,7 +60,7 @@ public class MethodLevelReferenceCountingGarbageCollector<N, D>
 	}
 
 	@Override
-	protected SootMethod genAbstraction(PathEdge<N, D> edge) {
+	protected SootMethod genAbstraction(PathEdge<Unit, Abstraction> edge) {
 		return icfg.getMethodOf(edge.getTarget());
 	}
 

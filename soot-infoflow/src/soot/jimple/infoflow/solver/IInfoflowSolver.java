@@ -28,31 +28,30 @@ public interface IInfoflowSolver {
 	 * @return The end summary of the given method for the given incoming
 	 *         abstraction
 	 */
-	public Set<EndSummary<Unit, Abstraction>> endSummary(SootMethod m, Abstraction d3);
+	public Set<EndSummary> endSummary(SootMethod m, Abstraction d3);
 
 	/**
 	 * Injects the given calling context into the incoming set
 	 *
 	 * @param callee   method
-	 * @param d3 	   calling context
+	 * @param d3       calling context
 	 * @param callSite call site
-	 * @param d2 	   incoming abstraction at the call site
-	 * @param d1	   calling context at the call site
+	 * @param d2       incoming abstraction at the call site
+	 * @param d1       calling context at the call site
 	 */
 	public void injectContext(IInfoflowSolver otherSolver, SootMethod callee, Abstraction d3, Unit callSite,
-							  Abstraction d2, Abstraction d1);
+			Abstraction d2, Abstraction d1);
 
 	/**
 	 * Calls applyEndSummaryOnCall in the current solver
 	 *
 	 * @param callee   method
-	 * @param d3	   calling context
+	 * @param d3       calling context
 	 * @param callSite call site
 	 * @param d2       incoming abstraction at the call site
 	 * @param d1       calling context at the call site
 	 */
-	public void applySummary(SootMethod callee, Abstraction d3, Unit callSite,
-							 Abstraction d2, Abstraction d1);
+	public void applySummary(SootMethod callee, Abstraction d3, Unit callSite, Abstraction d2, Abstraction d1);
 
 	/**
 	 * Cleans up some unused memory. Results will still be available afterwards, but
@@ -75,14 +74,14 @@ public interface IInfoflowSolver {
 	 * @param memoryManager The memory manager that shall be used to manage the
 	 *                      abstractions
 	 */
-	public void setMemoryManager(IMemoryManager<Abstraction, Unit> memoryManager);
+	public void setMemoryManager(IMemoryManager memoryManager);
 
 	/**
 	 * Gets the memory manager used by this solver to reduce memory consumption
 	 * 
 	 * @return The memory manager registered with this solver
 	 */
-	public IMemoryManager<Abstraction, Unit> getMemoryManager();
+	public IMemoryManager getMemoryManager();
 
 	/**
 	 * Sets whether abstractions on method returns shall be connected to the

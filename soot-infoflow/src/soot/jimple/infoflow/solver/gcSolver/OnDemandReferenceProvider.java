@@ -8,6 +8,7 @@ import com.google.common.cache.LoadingCache;
 import heros.SynchronizedBy;
 import heros.solver.IDESolver;
 import soot.SootMethod;
+import soot.Unit;
 import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
 
 /**
@@ -18,7 +19,7 @@ import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
  *
  * @param <N>
  */
-public class OnDemandReferenceProvider<N> extends AbstractReferenceProvider<SootMethod, N> {
+public class OnDemandReferenceProvider<N> extends AbstractReferenceProvider<SootMethod> {
 
 	@SynchronizedBy("by use of synchronized LoadingCache class")
 	protected final LoadingCache<SootMethod, Set<SootMethod>> methodToReferences = IDESolver.DEFAULT_CACHE_BUILDER
@@ -31,7 +32,7 @@ public class OnDemandReferenceProvider<N> extends AbstractReferenceProvider<Soot
 
 			});
 
-	public OnDemandReferenceProvider(BiDiInterproceduralCFG<N, SootMethod> icfg) {
+	public OnDemandReferenceProvider(BiDiInterproceduralCFG<Unit, SootMethod> icfg) {
 		super(icfg);
 	}
 

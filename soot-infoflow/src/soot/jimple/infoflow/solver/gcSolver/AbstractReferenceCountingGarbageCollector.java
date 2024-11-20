@@ -6,8 +6,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import heros.solver.PathEdge;
 import soot.SootMethod;
+import soot.Unit;
 import soot.jimple.infoflow.collect.ConcurrentCountingMap;
 import soot.jimple.infoflow.collect.ConcurrentHashSet;
+import soot.jimple.infoflow.data.Abstraction;
 import soot.jimple.infoflow.util.ExtendedAtomicInteger;
 import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
 import soot.util.ConcurrentHashMultiMap;
@@ -18,7 +20,7 @@ import soot.util.ConcurrentHashMultiMap;
  * @author Steven Arzt
  *
  */
-public abstract class AbstractReferenceCountingGarbageCollector<N, D, A> extends AbstractGarbageCollector<N, D, A>
+public abstract class AbstractReferenceCountingGarbageCollector<A> extends AbstractGarbageCollector<A>
 		implements IGarbageCollectorPeer<A> {
 
 	protected ConcurrentCountingMap<A> jumpFnCounter = new ConcurrentCountingMap<>();
@@ -31,7 +33,7 @@ public abstract class AbstractReferenceCountingGarbageCollector<N, D, A> extends
 	protected boolean checkChangeCounter = false;
 
 	protected boolean validateEdges = false;
-	protected Set<PathEdge<N, D>> oldEdges = new HashSet<>();
+	protected Set<PathEdge<Unit, Abstraction>> oldEdges = new HashSet<>();
 
 	/**
 	 * The number of methods to collect as candidates for garbage collection, before
@@ -43,21 +45,21 @@ public abstract class AbstractReferenceCountingGarbageCollector<N, D, A> extends
 	 */
 	protected int edgeThreshold = 0;
 
-	public AbstractReferenceCountingGarbageCollector(BiDiInterproceduralCFG<N, SootMethod> icfg,
-			ConcurrentHashMultiMap<A, PathEdge<N, D>> jumpFunctions,
+	public AbstractReferenceCountingGarbageCollector(BiDiInterproceduralCFG<Unit, SootMethod> icfg,
+			ConcurrentHashMultiMap<A, PathEdge<Unit, Abstraction>> jumpFunctions,
 			IGCReferenceProvider<A> referenceProvider) {
 		super(icfg, jumpFunctions, referenceProvider);
 	}
 
-	public AbstractReferenceCountingGarbageCollector(BiDiInterproceduralCFG<N, SootMethod> icfg,
-			ConcurrentHashMultiMap<A, PathEdge<N, D>> jumpFunctions) {
+	public AbstractReferenceCountingGarbageCollector(BiDiInterproceduralCFG<Unit, SootMethod> icfg,
+			ConcurrentHashMultiMap<A, PathEdge<Unit, Abstraction>> jumpFunctions) {
 		super(icfg, jumpFunctions);
 	}
 
-	protected abstract A genAbstraction(PathEdge<N, D> edge);
+	protected abstract A genAbstraction(PathEdge<Unit, Abstraction> edge);
 
 	@Override
-	public void notifyEdgeSchedule(PathEdge<N, D> edge) {
+	public void notifyEdgeSchedule(PathEdge<Unit, Abstraction> edge) {
 		A abstraction = genAbstraction(edge);
 		jumpFnCounter.increment(abstraction);
 		gcScheduleSet.add(abstraction);
@@ -71,7 +73,7 @@ public abstract class AbstractReferenceCountingGarbageCollector<N, D, A> extends
 	}
 
 	@Override
-	public void notifyTaskProcessed(PathEdge<N, D> edge) {
+	public void notifyTaskProcessed(PathEdge<Unit, Abstraction> edge) {
 		A abstraction = genAbstraction(edge);
 		jumpFnCounter.decrement(abstraction);
 	}
@@ -98,7 +100,7 @@ public abstract class AbstractReferenceCountingGarbageCollector<N, D, A> extends
 						continue;
 
 					// Get stats for the stuff we are about to remove
-					Set<PathEdge<N, D>> oldFunctions = jumpFunctions.get(abst);
+					Set<PathEdge<Unit, Abstraction>> oldFunctions = jumpFunctions.get(abst);
 					if (oldFunctions != null) {
 						int gcedSize = oldFunctions.size();
 						gcedEdges.addAndGet(gcedSize);

@@ -23,6 +23,7 @@ import soot.Unit;
 import soot.jimple.Stmt;
 import soot.jimple.infoflow.InfoflowConfiguration;
 import soot.jimple.infoflow.collect.AtomicBitSet;
+import soot.jimple.infoflow.data.accessPaths.ConcolicUnit;
 import soot.jimple.infoflow.solver.cfg.IInfoflowCFG.UnitContainer;
 import soot.jimple.infoflow.solver.fastSolver.FastSolverLinkedNode;
 import soot.jimple.infoflow.sourcesSinks.definitions.ISourceSinkDefinition;
@@ -53,7 +54,7 @@ public class Abstraction implements Cloneable, FastSolverLinkedNode<Abstraction,
 	/**
 	 * Unit/Stmt which activates the taint when the abstraction passes it
 	 */
-	protected Unit activationUnit = null;
+	protected ConcolicUnit activationUnit = null;
 	/**
 	 * Unit/Stmt which indicates it origin; tells the aliasing to turn around in
 	 * backwards analysis
@@ -159,7 +160,7 @@ public class Abstraction implements Cloneable, FastSolverLinkedNode<Abstraction,
 
 		a.postdominators = null;
 		a.dominator = null;
-		a.activationUnit = activationUnit;
+		a.activationUnit = new ConcolicUnit(activationUnit);
 		a.dependsOnCutAP |= a.getAccessPath().isCutOffApproximation();
 		return a;
 	}
@@ -268,7 +269,19 @@ public class Abstraction implements Cloneable, FastSolverLinkedNode<Abstraction,
 	}
 
 	public Unit getActivationUnit() {
+		return this.activationUnit == null ? null : this.activationUnit.getUnit();
+	}
+
+	@Override
+	public ConcolicUnit getConcolicActivationUnit() {
 		return this.activationUnit;
+	}
+
+	@Override
+	public Abstraction makeActivationUnitSymbolic() {
+		Abstraction abs = clone();
+		abs.activationUnit = new ConcolicUnit();
+		return abs;
 	}
 
 	public Unit getTurnUnit() {

@@ -1,40 +1,40 @@
 package soot.jimple.infoflow.solver.gcSolver.fpc;
 
-import heros.solver.Pair;
-import heros.solver.PathEdge;
-import soot.SootMethod;
-import soot.jimple.infoflow.collect.MyConcurrentHashMap;
-import soot.jimple.infoflow.solver.EndSummary;
-import soot.jimple.infoflow.solver.cfg.BackwardsInfoflowCFG;
-import soot.jimple.infoflow.solver.fastSolver.FastSolverLinkedNode;
-import soot.jimple.infoflow.solver.gcSolver.IGCReferenceProvider;
-import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
-import soot.util.ConcurrentHashMultiMap;
-
 import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NormalGarbageCollector<N, D extends FastSolverLinkedNode<D, N>>
-		extends FineGrainedReferenceCountingGarbageCollector<N, D> {
+import heros.solver.Pair;
+import heros.solver.PathEdge;
+import soot.SootMethod;
+import soot.Unit;
+import soot.jimple.infoflow.collect.MyConcurrentHashMap;
+import soot.jimple.infoflow.data.Abstraction;
+import soot.jimple.infoflow.solver.EndSummary;
+import soot.jimple.infoflow.solver.cfg.BackwardsInfoflowCFG;
+import soot.jimple.infoflow.solver.gcSolver.IGCReferenceProvider;
+import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
+import soot.util.ConcurrentHashMultiMap;
+
+public class NormalGarbageCollector extends FineGrainedReferenceCountingGarbageCollector {
 
 	protected static final Logger logger = LoggerFactory.getLogger(NormalGarbageCollector.class);
-	protected final AbstrationDependencyGraph<D> abstDependencyGraph;
-	protected final MyConcurrentHashMap<Pair<SootMethod, D>, Map<EndSummary<N, D>, EndSummary<N, D>>> endSummary;
+	protected final AbstrationDependencyGraph<Abstraction> abstDependencyGraph;
+	protected final MyConcurrentHashMap<Pair<SootMethod, Abstraction>, Map<EndSummary, EndSummary>> endSummary;
 
-	public NormalGarbageCollector(BiDiInterproceduralCFG<N, SootMethod> icfg,
-			ConcurrentHashMultiMap<Pair<SootMethod, D>, PathEdge<N, D>> jumpFunctions,
-			MyConcurrentHashMap<Pair<SootMethod, D>, Map<EndSummary<N, D>, EndSummary<N, D>>> endSummary,
-			AbstrationDependencyGraph<D> adg) {
+	public NormalGarbageCollector(BiDiInterproceduralCFG<Unit, SootMethod> icfg,
+			ConcurrentHashMultiMap<Pair<SootMethod, Abstraction>, PathEdge<Unit, Abstraction>> jumpFunctions,
+			MyConcurrentHashMap<Pair<SootMethod, Abstraction>, Map<EndSummary, EndSummary>> endSummary,
+			AbstrationDependencyGraph<Abstraction> adg) {
 		super(icfg, jumpFunctions, null);
 		this.abstDependencyGraph = adg;
 		this.endSummary = endSummary;
 	}
 
 	@Override
-	public boolean hasActiveDependencies(Pair<SootMethod, D> abstraction) {
+	public boolean hasActiveDependencies(Pair<SootMethod, Abstraction> abstraction) {
 		int changeCounter = -1;
 		try {
 			abstDependencyGraph.lock();
@@ -47,8 +47,8 @@ public class NormalGarbageCollector<N, D extends FastSolverLinkedNode<D, N>>
 					return true;
 
 				// Check the transitive callees
-				Set<Pair<SootMethod, D>> references = abstDependencyGraph.reachableClosure(abstraction);
-				for (Pair<SootMethod, D> ref : references) {
+				Set<Pair<SootMethod, Abstraction>> references = abstDependencyGraph.reachableClosure(abstraction);
+				for (Pair<SootMethod, Abstraction> ref : references) {
 					if (jumpFnCounter.get(ref) > 0)
 						return true;
 				}
@@ -66,7 +66,7 @@ public class NormalGarbageCollector<N, D extends FastSolverLinkedNode<D, N>>
 	}
 
 	@Override
-	protected IGCReferenceProvider<Pair<SootMethod, D>> createReferenceProvider() {
+	protected IGCReferenceProvider<Pair<SootMethod, Abstraction>> createReferenceProvider() {
 		return null;
 	}
 
@@ -82,7 +82,7 @@ public class NormalGarbageCollector<N, D extends FastSolverLinkedNode<D, N>>
 		logger.info(String.format("#edges of %s Abstraction Dependency Graph: %d", s, abstDependencyGraph.edgeSize()));
 		logger.info(String.format("#dummy end summary edges of %s: %d", s, this.endSummary.keySet().size()));
 		long v = 0;
-		for(Map<EndSummary<N, D>, EndSummary<N, D>> map: this.endSummary.values()) {
+		for (Map<EndSummary, EndSummary> map : this.endSummary.values()) {
 			v += map.size();
 		}
 		logger.info(String.format("#end summary edges of %s: %d", s, v));

@@ -9,7 +9,6 @@
  ******************************************************************************/
 package soot.jimple.infoflow;
 
-import soot.Unit;
 import soot.jimple.Stmt;
 import soot.jimple.infoflow.InfoflowConfiguration.SolverConfiguration;
 import soot.jimple.infoflow.aliasing.FlowSensitiveAliasStrategy;
@@ -94,15 +93,15 @@ public class Infoflow extends AbstractInfoflow {
 
 	@Override
 	protected IAliasingStrategy createAliasAnalysis(final ISourceSinkManager sourcesSinks, IInfoflowCFG iCfg,
-			InterruptableExecutor executor, IMemoryManager<Abstraction, Unit> memoryManager) {
+			InterruptableExecutor executor, IMemoryManager memoryManager) {
 		IAliasingStrategy aliasingStrategy;
 		IInfoflowSolver backSolver = null;
 		AliasProblem backProblem = null;
 		InfoflowManager aliasManager = null;
 		switch (getConfig().getAliasingAlgorithm()) {
 		case FlowSensitive:
-			aliasManager = new InfoflowManager(config, backSolver, new BackwardsInfoflowCFG(iCfg), sourcesSinks, taintWrapper,
-					hierarchy, manager);
+			aliasManager = new InfoflowManager(config, backSolver, new BackwardsInfoflowCFG(iCfg), sourcesSinks,
+					taintWrapper, hierarchy, manager);
 			backProblem = new AliasProblem(aliasManager);
 			// We need to create the right data flow solver
 			SolverConfiguration solverConfig = config.getSolverConfiguration();

@@ -1,6 +1,8 @@
 package soot.jimple.infoflow.solver.gcSolver;
 
 import heros.solver.PathEdge;
+import soot.Unit;
+import soot.jimple.infoflow.data.Abstraction;
 
 /**
  * Common interface for all garbage collector implementations oin the solver
@@ -8,7 +10,7 @@ import heros.solver.PathEdge;
  * @author Steven Arzt
  *
  */
-public interface IGarbageCollector<N, D> {
+public interface IGarbageCollector {
 
 	/**
 	 * Notifies the garbage collector that a new edge has been scheduled for
@@ -16,14 +18,14 @@ public interface IGarbageCollector<N, D> {
 	 * 
 	 * @param edge The edge that has been scheduled
 	 */
-	public void notifyEdgeSchedule(PathEdge<N, D> edge);
+	public void notifyEdgeSchedule(PathEdge<Unit, Abstraction> edge);
 
 	/**
 	 * Notifies the garbage collector that an edge has been fully processed
 	 * 
 	 * @param edge The edge has been fully processed
 	 */
-	public void notifyTaskProcessed(PathEdge<N, D> edge);
+	public void notifyTaskProcessed(PathEdge<Unit, Abstraction> edge);
 
 	/**
 	 * Performs the garbage collection

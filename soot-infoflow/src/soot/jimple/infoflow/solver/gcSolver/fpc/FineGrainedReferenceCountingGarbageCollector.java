@@ -1,27 +1,31 @@
 package soot.jimple.infoflow.solver.gcSolver.fpc;
 
-import heros.solver.Pair;
-import heros.solver.PathEdge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import heros.solver.Pair;
+import heros.solver.PathEdge;
 import soot.SootMethod;
+import soot.Unit;
+import soot.jimple.infoflow.data.Abstraction;
 import soot.jimple.infoflow.solver.gcSolver.AbstractReferenceCountingGarbageCollector;
 import soot.jimple.infoflow.solver.gcSolver.IGCReferenceProvider;
 import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
 import soot.util.ConcurrentHashMultiMap;
 
-public abstract class FineGrainedReferenceCountingGarbageCollector<N, D>
-		extends AbstractReferenceCountingGarbageCollector<N, D, Pair<SootMethod, D>> {
+public abstract class FineGrainedReferenceCountingGarbageCollector
+		extends AbstractReferenceCountingGarbageCollector<Pair<SootMethod, Abstraction>> {
+
 	protected static final Logger logger = LoggerFactory.getLogger(FineGrainedReferenceCountingGarbageCollector.class);
 
-	public FineGrainedReferenceCountingGarbageCollector(BiDiInterproceduralCFG<N, SootMethod> icfg,
-			ConcurrentHashMultiMap<Pair<SootMethod, D>, PathEdge<N, D>> jumpFunctions,
-			IGCReferenceProvider<Pair<SootMethod, D>> referenceProvider) {
+	public FineGrainedReferenceCountingGarbageCollector(BiDiInterproceduralCFG<Unit, SootMethod> icfg,
+			ConcurrentHashMultiMap<Pair<SootMethod, Abstraction>, PathEdge<Unit, Abstraction>> jumpFunctions,
+			IGCReferenceProvider<Pair<SootMethod, Abstraction>> referenceProvider) {
 		super(icfg, jumpFunctions, referenceProvider);
 	}
 
-	public FineGrainedReferenceCountingGarbageCollector(BiDiInterproceduralCFG<N, SootMethod> icfg,
-			ConcurrentHashMultiMap<Pair<SootMethod, D>, PathEdge<N, D>> jumpFunctions) {
+	public FineGrainedReferenceCountingGarbageCollector(BiDiInterproceduralCFG<Unit, SootMethod> icfg,
+			ConcurrentHashMultiMap<Pair<SootMethod, Abstraction>, PathEdge<Unit, Abstraction>> jumpFunctions) {
 		super(icfg, jumpFunctions);
 	}
 
@@ -124,7 +128,7 @@ public abstract class FineGrainedReferenceCountingGarbageCollector<N, D>
 	}
 
 	@Override
-	protected Pair<SootMethod, D> genAbstraction(PathEdge<N, D> edge) {
+	protected Pair<SootMethod, Abstraction> genAbstraction(PathEdge<Unit, Abstraction> edge) {
 		SootMethod method = icfg.getMethodOf(edge.getTarget());
 		return new Pair<>(method, edge.factAtSource());
 	}

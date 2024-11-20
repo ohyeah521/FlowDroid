@@ -1,6 +1,5 @@
 package soot.jimple.infoflow.solver;
 
-import soot.jimple.infoflow.solver.fastSolver.FastSolverLinkedNode;
 import soot.jimple.infoflow.solver.fastSolver.ISchedulingStrategy;
 
 /**
@@ -10,13 +9,13 @@ import soot.jimple.infoflow.solver.fastSolver.ISchedulingStrategy;
  * @author Steven Arzt
  *
  */
-public interface IStrategyBasedParallelSolver<N, D extends FastSolverLinkedNode<D, N>> {
+public interface IStrategyBasedParallelSolver {
 
 	/**
 	 * Sets the strategy for scheduling edges
 	 * 
 	 * @param strategy The strategy for scheduling edges
 	 */
-	public void setSchedulingStrategy(ISchedulingStrategy<N, D> strategy);
+	public void setSchedulingStrategy(ISchedulingStrategy strategy);
 
 }

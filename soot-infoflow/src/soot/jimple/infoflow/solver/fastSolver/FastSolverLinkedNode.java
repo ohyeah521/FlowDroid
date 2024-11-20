@@ -1,5 +1,7 @@
 package soot.jimple.infoflow.solver.fastSolver;
 
+import soot.jimple.infoflow.data.accessPaths.ConcolicUnit;
+
 /**
  * Common interface for all abstractions processed by the IFDS solver
  * 
@@ -25,8 +27,7 @@ public interface FastSolverLinkedNode<D, N> extends Cloneable {
 	/**
 	 * Explicitly sets the predecessor of this node.
 	 * 
-	 * @param predecessor
-	 *            The predecessor node to set
+	 * @param predecessor The predecessor node to set
 	 */
 	public void setPredecessor(D predecessor);
 
@@ -45,7 +46,8 @@ public interface FastSolverLinkedNode<D, N> extends Cloneable {
 	public D clone();
 
 	/**
-	 * Clones this data flow abstraction with the current statement and corresponding call site set
+	 * Clones this data flow abstraction with the current statement and
+	 * corresponding call site set
 	 *
 	 * @return A clone of the current data flow abstraction
 	 */
@@ -65,5 +67,9 @@ public interface FastSolverLinkedNode<D, N> extends Cloneable {
 	 * @return The length of the path over which this node was propagated
 	 */
 	public int getPathLength();
+
+	public ConcolicUnit getConcolicActivationUnit();
+
+	public D makeActivationUnitSymbolic();
 
 }

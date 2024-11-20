@@ -18,7 +18,7 @@ import soot.jimple.infoflow.solver.memory.IMemoryManager;
  * @author Steven Arzt
  *
  */
-public class FlowDroidMemoryManager implements IMemoryManager<Abstraction, Unit> {
+public class FlowDroidMemoryManager implements IMemoryManager {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 

@@ -20,8 +20,11 @@ import soot.Unit;
 import soot.jimple.infoflow.collect.MyConcurrentHashMap;
 import soot.jimple.infoflow.data.Abstraction;
 import soot.jimple.infoflow.problems.AbstractInfoflowProblem;
-import soot.jimple.infoflow.solver.*;
-import soot.jimple.infoflow.solver.cfg.IInfoflowCFG;
+import soot.jimple.infoflow.solver.EndSummary;
+import soot.jimple.infoflow.solver.IFollowReturnsPastSeedsHandler;
+import soot.jimple.infoflow.solver.IInfoflowSolver;
+import soot.jimple.infoflow.solver.ISolverPeerGroup;
+import soot.jimple.infoflow.solver.IncomingRecord;
 import soot.jimple.infoflow.solver.executors.InterruptableExecutor;
 import soot.jimple.infoflow.solver.functions.SolverCallFlowFunction;
 import soot.jimple.infoflow.solver.functions.SolverCallToReturnFlowFunction;
@@ -34,13 +37,10 @@ import soot.jimple.infoflow.solver.functions.SolverReturnFlowFunction;
  * edges containing new taint information
  * 
  */
-public class InfoflowSolver extends IFDSSolver<Unit, Abstraction, IInfoflowCFG>
-		implements IInfoflowSolver {
+public class InfoflowSolver extends IFDSSolver implements IInfoflowSolver {
 
 	protected IFollowReturnsPastSeedsHandler followReturnsPastSeedsHandler = null;
 	protected final AbstractInfoflowProblem problem;
-
-	protected ISolverPeerGroup peerGroup = null;
 
 	public InfoflowSolver(AbstractInfoflowProblem problem, InterruptableExecutor executor) {
 		super(problem);
@@ -62,12 +62,12 @@ public class InfoflowSolver extends IFDSSolver<Unit, Abstraction, IInfoflowCFG>
 
 	@Override
 	public void injectContext(IInfoflowSolver otherSolver, SootMethod callee, Abstraction d3, Unit callSite,
-							  Abstraction d2, Abstraction d1) {
+			Abstraction d2, Abstraction d1) {
 		// The incoming data structure is shared in the peer group. No need to inject.
 	}
 
 	@Override
-	public Set<IncomingRecord<Unit, Abstraction>> incoming(Abstraction d1, SootMethod m) {
+	public Set<IncomingRecord> incoming(Abstraction d1, SootMethod m) {
 		// Redirect to peer group
 		return peerGroup.incoming(d1, m);
 	}
@@ -131,7 +131,7 @@ public class InfoflowSolver extends IFDSSolver<Unit, Abstraction, IInfoflowCFG>
 	}
 
 	@Override
-	public Set<EndSummary<Unit, Abstraction>> endSummary(SootMethod m, Abstraction d3) {
+	public Set<EndSummary> endSummary(SootMethod m, Abstraction d3) {
 		return super.endSummary(m, d3);
 	}
 
@@ -145,7 +145,7 @@ public class InfoflowSolver extends IFDSSolver<Unit, Abstraction, IInfoflowCFG>
 			final Abstraction d2 = edge.factAtTarget();
 
 			final SootMethod methodThatNeedsSummary = icfg.getMethodOf(u);
-			final Set<IncomingRecord<Unit, Abstraction>> inc = incoming(d1, methodThatNeedsSummary);
+			final Set<IncomingRecord> inc = incoming(d1, methodThatNeedsSummary);
 
 			if (inc == null || inc.isEmpty())
 				followReturnsPastSeedsHandler.handleFollowReturnsPastSeeds(d1, u, d2);

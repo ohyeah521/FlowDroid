@@ -3,7 +3,6 @@ package soot.jimple.infoflow;
 import java.util.Set;
 
 import soot.SootMethod;
-import soot.Unit;
 import soot.jimple.Stmt;
 import soot.jimple.infoflow.InfoflowConfiguration.DataFlowDirection;
 import soot.jimple.infoflow.aliasing.IAliasingStrategy;
@@ -76,7 +75,7 @@ public class BackwardsInfoflow extends AbstractInfoflow {
 
 	@Override
 	protected IAliasingStrategy createAliasAnalysis(final ISourceSinkManager sourcesSinks, IInfoflowCFG iCfg,
-			InterruptableExecutor executor, IMemoryManager<Abstraction, Unit> memoryManager) {
+			InterruptableExecutor executor, IMemoryManager memoryManager) {
 		return createBackwardAliasAnalysis(manager, sourcesSinks, iCfg, executor, memoryManager);
 	}
 

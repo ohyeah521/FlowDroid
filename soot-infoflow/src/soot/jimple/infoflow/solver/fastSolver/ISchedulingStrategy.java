@@ -1,23 +1,29 @@
 package soot.jimple.infoflow.solver.fastSolver;
 
+import soot.Unit;
+import soot.jimple.infoflow.data.Abstraction;
+
 /**
  * Common interface for all edge scheduling strategies in the solver
  * 
  * @author Steven Arzt
  *
  */
-public interface ISchedulingStrategy<N, D extends FastSolverLinkedNode<D, N>> {
+public interface ISchedulingStrategy {
 
-	public void propagateInitialSeeds(D sourceVal, N target, D targetVal, N relatedCallSite,
+	public void propagateInitialSeeds(Abstraction sourceVal, Unit target, Abstraction targetVal, Unit relatedCallSite,
 			boolean isUnbalancedReturn);
 
-	public void propagateNormalFlow(D sourceVal, N target, D targetVal, N relatedCallSite, boolean isUnbalancedReturn);
-
-	public void propagateCallFlow(D sourceVal, N target, D targetVal, N relatedCallSite, boolean isUnbalancedReturn);
-
-	public void propagateCallToReturnFlow(D sourceVal, N target, D targetVal, N relatedCallSite,
+	public void propagateNormalFlow(Abstraction sourceVal, Unit target, Abstraction targetVal, Unit relatedCallSite,
 			boolean isUnbalancedReturn);
 
-	public void propagateReturnFlow(D sourceVal, N target, D targetVal, N relatedCallSite, boolean isUnbalancedReturn);
+	public void propagateCallFlow(Abstraction sourceVal, Unit target, Abstraction targetVal, Unit relatedCallSite,
+			boolean isUnbalancedReturn);
+
+	public void propagateCallToReturnFlow(Abstraction sourceVal, Unit target, Abstraction targetVal,
+			Unit relatedCallSite, boolean isUnbalancedReturn);
+
+	public void propagateReturnFlow(Abstraction sourceVal, Unit target, Abstraction targetVal, Unit relatedCallSite,
+			boolean isUnbalancedReturn);
 
 }

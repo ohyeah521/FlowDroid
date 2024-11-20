@@ -5,6 +5,7 @@ import java.util.Set;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
+import soot.Unit;
 import soot.jimple.toolkits.ide.icfg.BiDiInterproceduralCFG;
 import soot.util.HashMultiMap;
 import soot.util.MultiMap;
@@ -17,11 +18,11 @@ import soot.util.MultiMap;
  * 
  * @author Steven Arzt
  */
-public class AheadOfTimeReferenceProvider<N> extends AbstractReferenceProvider<SootMethod, N> {
+public class AheadOfTimeReferenceProvider extends AbstractReferenceProvider<SootMethod> {
 
 	private final MultiMap<SootMethod, SootMethod> methodToCallees = new HashMultiMap<>();
 
-	public AheadOfTimeReferenceProvider(BiDiInterproceduralCFG<N, SootMethod> icfg) {
+	public AheadOfTimeReferenceProvider(BiDiInterproceduralCFG<Unit, SootMethod> icfg) {
 		super(icfg);
 
 		// Initialize the caller/callee relationships

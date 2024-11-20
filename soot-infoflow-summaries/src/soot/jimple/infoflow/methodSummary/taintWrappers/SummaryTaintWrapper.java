@@ -901,9 +901,9 @@ public class SummaryTaintWrapper implements IReversibleTaintWrapper, ICollection
 		// We might already have a summary for the callee
 		Set<AccessPathPropagator> outgoingTaints = null;
 		for (Abstraction abs : absSet) {
-			Set<EndSummary<Unit, Abstraction>> endSummary = manager.getMainSolver().endSummary(implementor, abs);
+			Set<EndSummary> endSummary = manager.getMainSolver().endSummary(implementor, abs);
 			if (endSummary != null && !endSummary.isEmpty()) {
-				for (EndSummary<Unit, Abstraction> pair : endSummary) {
+				for (EndSummary pair : endSummary) {
 					if (outgoingTaints == null)
 						outgoingTaints = new HashSet<>();
 
