@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: Build FlowDroid 2.14.1
 
 on:
   push:
@@ -6,53 +6,65 @@ on:
   pull_request:
     branches: [ "develop" ]
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    
+    - name: Clone FlowDroid Repository
+      uses: actions/checkout@v3
+      with:
+        repository: 'secure-software-engineering/FlowDroid'
+        ref: 'v2.14.1'
+        fetch-depth: 1
+
     - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
-    
-    
-    - name: Create Maven Settings
-      run: |
-        mkdir -p ~/.m2
-        echo "<settings>
-          <profiles>
-            <profile>
-              <id>default</id>
-              <activation>
-                <activeByDefault>true</activeByDefault>
-              </activation>
-              <properties>
-                <maven.compiler.source>11</maven.compiler.source>
-                <maven.compiler.target>11</maven.compiler.target>
-                <maven.compiler.release>11</maven.compiler.release>
-              </properties>
-            </profile>
-          </profiles>
-        </settings>" > ~/.m2/settings.xml
-        
-    - name: Clone FlowDroid 2.14.1
-      run: |
-        git clone https://github.com/secure-software-engineering/FlowDroid.git
-        cd FlowDroid
-        git checkout tags/v2.14.1
-        
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
     - name: Build with Maven
       run: |
-        cd FlowDroid
-        mvn clean install -DskipTests -Dmaven.compiler.source=11 -Dmaven.compiler.target=11 -X
+        echo "Starting build for FlowDroid 2.14.1"
+        mvn clean install -DskipTests=true
 
-    - name: Upload artifact
+    - name: Run Tests
+      run: |
+        mvn test
+
+    - name: Upload Build Artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: flowdroid-jar
-        path: FlowDroid/soot-infoflow-cmd/target/soot-infoflow-cmd-jar-with-dependencies.jar
+        name: flowdroid-2.14.1-build
+        path: |
+          soot-infoflow/target/*.jar
+          soot-infoflow-android/target/*.jar
+          soot-infoflow-cmd/target/*.jar
+          soot-infoflow-summaries/target/*.jar
+
+    - name: Create Release Directory
+      run: |
+        mkdir -p release
+        cp soot-infoflow/target/*-complete.jar release/
+        cp soot-infoflow-android/target/*-complete.jar release/
+        cp soot-infoflow-cmd/target/*-complete.jar release/
+        cp soot-infoflow-summaries/target/*-complete.jar release/
+
+    - name: Upload Release Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: flowdroid-2.14.1-release
+        path: release/
