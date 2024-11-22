@@ -20,12 +20,6 @@ jobs:
         distribution: 'temurin'
         cache: maven
         
-    - name: Clone and Build axml dependency
-      run: |
-        git clone https://github.com/soot-oss/axml.git
-        cd axml
-        mvn clean install
-        cd ..
         
     - name: Clone FlowDroid 2.14.1
       run: |
