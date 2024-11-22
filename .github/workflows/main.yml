@@ -19,7 +19,26 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
-        
+    
+    
+    - name: Create Maven Settings
+      run: |
+        mkdir -p ~/.m2
+        echo "<settings>
+          <profiles>
+            <profile>
+              <id>default</id>
+              <activation>
+                <activeByDefault>true</activeByDefault>
+              </activation>
+              <properties>
+                <maven.compiler.source>11</maven.compiler.source>
+                <maven.compiler.target>11</maven.compiler.target>
+                <maven.compiler.release>11</maven.compiler.release>
+              </properties>
+            </profile>
+          </profiles>
+        </settings>" > ~/.m2/settings.xml
         
     - name: Clone FlowDroid 2.14.1
       run: |
@@ -30,7 +49,7 @@ jobs:
     - name: Build with Maven
       run: |
         cd FlowDroid
-        mvn clean install -DskipTests
+        mvn clean install -DskipTests -Dmaven.compiler.source=11 -Dmaven.compiler.target=11 -X
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
